@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read # This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -25,13 +25,15 @@ jobs:
           distribution: 'microsoft'
 
       - name: Build with Maven
-        run: mvn clean install
+        run: |
+          cd MyWebApp  # Navigate to the correct directory
+          mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.war'
+          path: 'MyWebApp/target/*.war'  # Adjusted path for WAR file
 
   deploy:
     runs-on: ubuntu-latest
@@ -52,5 +54,5 @@ jobs:
         with:
           app-name: 'testwebapp22'
           slot-name: 'Production'
-          package: '*.war'
+          package: 'MyWebApp/target/*.war'  # Corrected WAR file path
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_803BB15E84E242FEB151FFD492DDB10D }}
